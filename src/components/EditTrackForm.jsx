@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Chip, Stack } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { updateTrack } from "../api/tracks";
+import { useGenres } from "../hooks/useGenres";
 
 const EditTrackForm = ({ track, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -11,21 +13,20 @@ const EditTrackForm = ({ track, onSave, onCancel }) => {
     coverImage: track.coverImage || "",
   });
 
-  const [newGenre, setNewGenre] = useState("");
+  const { data: availableGenres = [] } = useGenres();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddGenre = () => {
-    if (newGenre && !formData.genres.includes(newGenre)) {
+  const handleAddGenre = (genre) => {
+    if (!formData.genres.includes(genre)) {
       setFormData((prev) => ({
         ...prev,
-        genres: [...prev.genres, newGenre],
+        genres: [...prev.genres, genre],
       }));
     }
-    setNewGenre("");
   };
 
   const handleRemoveGenre = (genreToRemove) => {
@@ -77,18 +78,10 @@ const EditTrackForm = ({ track, onSave, onCancel }) => {
           onChange={handleChange}
           fullWidth
         />
+
         <Box>
-          <TextField
-            label="Add Genre"
-            value={newGenre}
-            onChange={(e) => setNewGenre(e.target.value)}
-            size="small"
-            sx={{ mr: 1 }}
-          />
-          <Button onClick={handleAddGenre} variant="outlined" size="small">
-            Add
-          </Button>
-          <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
+          <Box sx={{ mb: 1, fontWeight: "bold" }}>Current Genres:</Box>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {formData.genres.map((genre) => (
               <Chip
                 key={genre}
@@ -98,6 +91,24 @@ const EditTrackForm = ({ track, onSave, onCancel }) => {
             ))}
           </Box>
         </Box>
+
+        <Box>
+          <Box sx={{ mb: 1, fontWeight: "bold" }}>Add Genres:</Box>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            {availableGenres
+              .filter((g) => !formData.genres.includes(g))
+              .map((genre) => (
+                <Chip
+                  key={genre}
+                  label={genre}
+                  icon={<AddIcon />}
+                  onClick={() => handleAddGenre(genre)}
+                  variant="outlined"
+                />
+              ))}
+          </Box>
+        </Box>
+
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
           <Button onClick={onCancel} color="secondary">
             Cancel
