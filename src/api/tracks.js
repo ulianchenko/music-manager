@@ -18,3 +18,12 @@ export const fetchTracks = async ({
   });
   return res.data;
 };
+
+export const deleteTrack = async (id) => {
+  return await API.delete(`/tracks/${id}`);
+};
+
+export const updateTrack = async (id, updatedData) => {
+  const response = await API.put(`/tracks/${id}`, updatedData);
+  return response.data;
+};

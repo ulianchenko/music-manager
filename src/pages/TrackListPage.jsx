@@ -6,6 +6,7 @@ import Filters from "../components/Filters";
 import TrackListItem from "../components/TrackListItem";
 import Pagination from "../components/Pagination";
 import { debounce } from "lodash";
+import { deleteTrack } from "../api/tracks";
 
 const TrackListPage = () => {
   const [search, setSearch] = useState("");
@@ -15,9 +16,9 @@ const TrackListPage = () => {
   const [allArtists, setAllArtists] = useState([]);
   const [sort, setSort] = useState("title");
   const [order, setOrder] = useState("asc");
+  const [tracks, setTracks] = useState([]);
 
   const { data: genres, isLoading: isGenresLoading } = useGenres();
-
   const { data: trackData, isLoading: isTracksLoading } = useTracks({
     search,
     genre,
@@ -29,6 +30,12 @@ const TrackListPage = () => {
     order,
   });
 
+  useEffect(() => {
+    if (trackData?.data) {
+      setTracks(trackData.data);
+    }
+  }, [trackData]);
+
   const handleSearchChange = debounce((value) => {
     setSearch(value);
     setPage(1);
@@ -39,6 +46,22 @@ const TrackListPage = () => {
       handleSearchChange.cancel();
     };
   }, []);
+
+  const handleUpdate = (updatedTrack) => {
+    setTracks((prev) =>
+      prev.map((track) => (track.id === updatedTrack.id ? updatedTrack : track))
+    );
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteTrack(id);
+      setTracks((prev) => prev.filter((track) => track.id !== id));
+    } catch (error) {
+      console.error("Failed to delete track", error);
+      alert("Failed to delete track. Please try again.");
+    }
+  };
 
   if (isTracksLoading || isGenresLoading) return <div>Loading...</div>;
 
@@ -76,9 +99,13 @@ const TrackListPage = () => {
       />
 
       <Grid container direction="column" spacing={2}>
-        {trackData?.data.map((track) => (
+        {tracks.map((track) => (
           <Grid key={track.id}>
-            <TrackListItem track={track} />
+            <TrackListItem
+              track={track}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+            />
           </Grid>
         ))}
       </Grid>

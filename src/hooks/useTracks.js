@@ -18,13 +18,19 @@ export const useTracks = ({
   order,
 }) => {
   return useQuery({
-    queryKey: ['tracks', { page, search, genre, artist, sort, order }],
+    queryKey: ["tracks", { page, search, genre, artist, sort, order }],
     queryFn: () => fetchTracks({ page, search, genre, artist, sort, order }),
     keepPreviousData: true,
     select: (data) => {
       const trackData = Array.isArray(data?.data) ? data.data : [];
 
-      if (page === 1 && !search && !genre && !artist && allArtists.length === 0) {
+      if (
+        page === 1 &&
+        !search &&
+        !genre &&
+        !artist &&
+        allArtists.length === 0
+      ) {
         const unique = getUniqueArtists(trackData);
         setAllArtists(unique);
       }
