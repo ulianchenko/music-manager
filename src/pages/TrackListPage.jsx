@@ -1,25 +1,79 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchTracks } from "../api/tracks";
+import { useState, useEffect } from "react";
+import { Container, Typography, Grid } from "@mui/material";
+import { useTracks } from "../hooks/useTracks";
+import { useGenres } from "../hooks/useGenres";
+import Filters from "../components/Filters";
+import TrackListItem from "../components/TrackListItem";
+import Pagination from "../components/Pagination";
+import { debounce } from "lodash";
 
 const TrackListPage = () => {
-  const { data: tracks, isLoading } = useQuery(["tracks"], fetchTracks);
+  const [search, setSearch] = useState("");
+  const [genre, setGenre] = useState("");
+  const [artist, setArtist] = useState("");
+  const [page, setPage] = useState(1);
+  const [allArtists, setAllArtists] = useState([]);
 
-  if (isLoading) return <div data-testid="loading-tracks">Loading...</div>;
+  const { data: genres, isLoading: isGenresLoading } = useGenres();
+
+  const { data: trackData, isLoading: isTracksLoading } = useTracks({
+    search,
+    genre,
+    artist,
+    page,
+    allArtists,
+    setAllArtists,
+  });
+
+  const handleSearchChange = debounce((value) => {
+    setSearch(value);
+    setPage(1);
+  }, 500);
+
+  useEffect(() => {
+    return () => {
+      handleSearchChange.cancel();
+    };
+  }, []);
+
+  if (isTracksLoading || isGenresLoading) return <div>Loading...</div>;
 
   return (
-    <div>
-      <h1 data-testid="tracks-header">Tracks</h1>
-      <button data-testid="create-track-button">Create Track</button>
-      <ul>
-        {tracks.map((track) => (
-          <li key={track.id} data-testid={`track-item-${track.id}`}>
-            <div data-testid={`track-item-${track.id}-title`}>{track.title}</div>
-            <div data-testid={`track-item-${track.id}-artist`}>{track.artist}</div>
-          </li>
+    <Container>
+      <Typography variant="h4" gutterBottom>All Tracks</Typography>
+
+      <Filters
+        searchValue={search}
+        genreValue={genre}
+        artistValue={artist}
+        genreOptions={genres}
+        artistOptions={allArtists}
+        onSearchChange={handleSearchChange}
+        onGenreChange={(value) => {
+          setGenre(value);
+          setPage(1);
+        }}
+        onArtistChange={(value) => {
+          setArtist(value);
+          setPage(1);
+        }}
+      />
+
+      <Grid container direction="column" spacing={2}>
+        {trackData?.data.map((track) => (
+          <Grid key={track.id}>
+            <TrackListItem track={track} />
+          </Grid>
         ))}
-      </ul>
-    </div>
+      </Grid>
+
+      <Pagination
+        page={trackData?.meta.page}
+        totalPages={trackData?.meta.totalPages}
+        onPageChange={setPage}
+      />
+    </Container>
   );
 };
 
-export default TrackListPage;
+export default TrackListPage
