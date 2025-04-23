@@ -13,6 +13,8 @@ const TrackListPage = () => {
   const [artist, setArtist] = useState("");
   const [page, setPage] = useState(1);
   const [allArtists, setAllArtists] = useState([]);
+  const [sort, setSort] = useState("title");
+  const [order, setOrder] = useState("asc");
 
   const { data: genres, isLoading: isGenresLoading } = useGenres();
 
@@ -23,6 +25,8 @@ const TrackListPage = () => {
     page,
     allArtists,
     setAllArtists,
+    sort,
+    order,
   });
 
   const handleSearchChange = debounce((value) => {
@@ -40,7 +44,9 @@ const TrackListPage = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>All Tracks</Typography>
+      <Typography variant="h4" gutterBottom>
+        All Tracks
+      </Typography>
 
       <Filters
         searchValue={search}
@@ -49,12 +55,22 @@ const TrackListPage = () => {
         genreOptions={genres}
         artistOptions={allArtists}
         onSearchChange={handleSearchChange}
+        sort={sort}
+        order={order}
         onGenreChange={(value) => {
           setGenre(value);
           setPage(1);
         }}
         onArtistChange={(value) => {
           setArtist(value);
+          setPage(1);
+        }}
+        onSortChange={(value) => {
+          setSort(value);
+          setPage(1);
+        }}
+        onOrderChange={(value) => {
+          setOrder(value);
           setPage(1);
         }}
       />
@@ -76,4 +92,4 @@ const TrackListPage = () => {
   );
 };
 
-export default TrackListPage
+export default TrackListPage;

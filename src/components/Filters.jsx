@@ -1,4 +1,11 @@
-import { TextField, Grid, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import {
+  TextField,
+  Grid,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 
 const Filters = ({
   searchValue,
@@ -6,9 +13,13 @@ const Filters = ({
   artistValue,
   genreOptions = [],
   artistOptions = [],
+  sort,
+  order,
   onSearchChange,
   onGenreChange,
   onArtistChange,
+  onSortChange,
+  onOrderChange,
 }) => {
   return (
     <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -53,6 +64,35 @@ const Filters = ({
                 {artist || "All"}
               </MenuItem>
             ))}
+          </Select>
+        </FormControl>
+      </Grid>
+
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <FormControl fullWidth>
+          <InputLabel>Sort By</InputLabel>
+          <Select
+            value={sort}
+            label="Sort By"
+            onChange={(e) => onSortChange(e.target.value)}
+          >
+            <MenuItem value="title">Title</MenuItem>
+            <MenuItem value="artist">Artist</MenuItem>
+            <MenuItem value="album">Album</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid>
+
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <FormControl fullWidth>
+          <InputLabel>Order</InputLabel>
+          <Select
+            value={order}
+            label="Order"
+            onChange={(e) => onOrderChange(e.target.value)}
+          >
+            <MenuItem value="asc">Ascending</MenuItem>
+            <MenuItem value="desc">Descending</MenuItem>
           </Select>
         </FormControl>
       </Grid>

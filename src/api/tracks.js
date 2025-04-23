@@ -10,20 +10,11 @@ export const fetchTracks = async ({
   search = "",
   genre = "",
   artist = "",
+  sort = "",
+  order = "",
 } = {}) => {
   const res = await API.get("/tracks", {
-    params: { page, search, genre, artist },
+    params: { page, search, genre, artist, sort, order },
   });
   return res.data;
-};
-
-export const createTrack = (data) => API.post("/tracks", data);
-export const updateTrack = (id, data) => API.put(`/tracks/${id}`, data);
-export const deleteTrack = (id) => API.delete(`/tracks/${id}`);
-export const uploadTrackFile = (id, file) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  return API.post(`/tracks/${id}/upload`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
 };
