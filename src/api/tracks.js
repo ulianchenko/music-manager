@@ -39,3 +39,8 @@ export const uploadTrackFile = async (trackId, formData) => {
   });
   return res.data;
 };
+
+export const bulkDeleteTracks = async (ids) => {
+  const res = await API.post("/tracks/delete", { ids });
+  return res.data;
+};

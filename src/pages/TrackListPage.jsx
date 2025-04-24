@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Grid, Button, Box } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Grid,
+  Button,
+  Box,
+} from "@mui/material";
 import { useTracks } from "../hooks/useTracks";
 import { useGenres } from "../hooks/useGenres";
 import Filters from "../components/Filters";
 import TrackListItem from "../components/TrackListItem";
 import Pagination from "../components/Pagination";
 import { debounce } from "lodash";
-import { deleteTrack, updateTrack } from "../api/tracks";
+import { deleteTrack, updateTrack, bulkDeleteTracks } from "../api/tracks";
 import CreateTrackModal from "../modals/CreateTrackModal";
 
 const TrackListPage = () => {
@@ -19,6 +25,7 @@ const TrackListPage = () => {
   const [order, setOrder] = useState("asc");
   const [tracks, setTracks] = useState([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedTracks, setSelectedTracks] = useState([]);
 
   const { data: genres, isLoading: isGenresLoading } = useGenres();
   const { data: trackData, isLoading: isTracksLoading } = useTracks({
@@ -53,7 +60,9 @@ const TrackListPage = () => {
     try {
       const updatedTrack = await updateTrack(id, updatedTrackData);
       setTracks((prev) =>
-        prev.map((track) => (track.id === updatedTrack.id ? updatedTrack : track))
+        prev.map((track) =>
+          track.id === updatedTrack.id ? updatedTrack : track
+        )
       );
     } catch (error) {
       console.error("Error updating track:", error);
@@ -75,7 +84,32 @@ const TrackListPage = () => {
     setTracks((prev) => [newTrack, ...prev]);
   };
 
-  if (isTracksLoading || isGenresLoading) return <div data-testid="loading-indicator">Loading...</div>;
+  const handleSelectTrack = (trackId) => {
+    setSelectedTracks((prevSelected) => {
+      if (prevSelected.includes(trackId)) {
+        return prevSelected.filter((id) => id !== trackId);
+      } else {
+        return [...prevSelected, trackId];
+      }
+    });
+  };
+
+  const handleBulkDelete = async () => {
+    try {
+      await bulkDeleteTracks(selectedTracks);
+      setTracks((prev) =>
+        prev.filter((track) => !selectedTracks.includes(track.id))
+      );
+      setSelectedTracks([]);
+    } catch (error) {
+      console.error("Failed to delete tracks", error);
+      alert("Failed to delete selected tracks. Please try again.");
+    }
+  };
+
+
+  if (isTracksLoading || isGenresLoading)
+    return <div data-testid="loading-indicator">Loading...</div>;
 
   return (
     <Container>
@@ -85,8 +119,14 @@ const TrackListPage = () => {
         alignItems="center"
         mb={2}
       >
-        <Typography variant="h2" data-testid="tracks-header">Music tracks</Typography>
-        <Button variant="contained" onClick={() => setIsCreateModalOpen(true)} data-testid="create-track-button" >
+        <Typography variant="h2" data-testid="tracks-header">
+          Music tracks
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => setIsCreateModalOpen(true)}
+          data-testid="create-track-button"
+        >
           Create Track
         </Button>
       </Box>
@@ -118,6 +158,17 @@ const TrackListPage = () => {
         }}
       />
 
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleBulkDelete}
+        disabled={selectedTracks.length === 0}
+        data-testid="bulk-delete-button"
+        sx={{ mb: 2 }}
+      >
+        Delete Selected
+      </Button>
+
       <Grid container direction="column" spacing={2}>
         {tracks.map((track) => (
           <Grid key={track.id}>
@@ -125,6 +176,8 @@ const TrackListPage = () => {
               track={track}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
+              onSelect={handleSelectTrack}
+              isSelected={selectedTracks.includes(track.id)}
             />
           </Grid>
         ))}

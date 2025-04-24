@@ -61,7 +61,7 @@ const TrackUpload = ({ trackId, initialUrl, onUpload }) => {
   return (
     <Box mt={4}>
       <Typography variant="h6">Upload Audio File</Typography>
-      <Stack direction="row" spacing={2} alignItems="center" mt={1}>
+      <Stack direction="row" spacing={2} alignItems="center" justifyContent="center" mt={1}>
         <label htmlFor="upload-audio">
           <Input
             type="file"

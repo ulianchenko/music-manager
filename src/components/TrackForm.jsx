@@ -19,7 +19,6 @@ const trackSchema = z.object({
     .or(z.literal("")),
 });
 
-// const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
 const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
   const { data: availableGenres = [], isLoading: genresLoading } = useGenres();
   const [imageError, setImageError] = useState(false);
