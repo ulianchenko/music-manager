@@ -12,7 +12,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { uploadTrackFile } from "../api/tracks";
 
 const MAX_FILE_SIZE_MB = 10;
-const SUPPORTED_TYPES = ["audio/mpeg", "audio/wav"];
+const SUPPORTED_TYPES = ["audio/mpeg", "audio/wav", 'audio/mp3', 'audio/x-wav'];
 
 const TrackUpload = ({ trackId, initialUrl, onUpload }) => {
   const [audioUrl, setAudioUrl] = useState(initialUrl || "");

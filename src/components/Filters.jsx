@@ -29,6 +29,7 @@ const Filters = ({
           fullWidth
           defaultValue={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
+          inputProps={{ "data-testid": "search-input" }}
         />
       </Grid>
 
@@ -39,6 +40,7 @@ const Filters = ({
             value={genreValue}
             label="Genre"
             onChange={(e) => onGenreChange(e.target.value)}
+            inputProps={{ "data-testid": "filter-genre" }}
           >
             <MenuItem value="">All</MenuItem>
             {genreOptions.map((genre, index) => (
@@ -57,6 +59,7 @@ const Filters = ({
             value={artistValue}
             label="Artist"
             onChange={(e) => onArtistChange(e.target.value)}
+            inputProps={{ "data-testid": "filter-artist" }}
           >
             <MenuItem value="">All</MenuItem>
             {artistOptions.map((artist, index) => (

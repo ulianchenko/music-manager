@@ -75,7 +75,7 @@ const TrackListPage = () => {
     setTracks((prev) => [newTrack, ...prev]);
   };
 
-  if (isTracksLoading || isGenresLoading) return <div>Loading...</div>;
+  if (isTracksLoading || isGenresLoading) return <div data-testid="loading-indicator">Loading...</div>;
 
   return (
     <Container>
@@ -85,8 +85,8 @@ const TrackListPage = () => {
         alignItems="center"
         mb={2}
       >
-        <Typography variant="h2">Music tracks</Typography>
-        <Button variant="contained" onClick={() => setIsCreateModalOpen(true)}>
+        <Typography variant="h2" data-testid="tracks-header">Music tracks</Typography>
+        <Button variant="contained" onClick={() => setIsCreateModalOpen(true)} data-testid="create-track-button" >
           Create Track
         </Button>
       </Box>

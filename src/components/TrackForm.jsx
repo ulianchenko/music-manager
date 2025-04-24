@@ -73,7 +73,7 @@ const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
   }
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 2 }}>
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 2 }} data-testid="track-form">
       <Stack spacing={2}>
         <TextField
           label="Title"
@@ -81,6 +81,7 @@ const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
           error={!!errors.title}
           helperText={errors.title?.message}
           fullWidth
+          inputProps={{ "data-testid": "input-title" }}
         />
         <TextField
           label="Artist"
@@ -88,6 +89,7 @@ const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
           error={!!errors.artist}
           helperText={errors.artist?.message}
           fullWidth
+          inputProps={{ "data-testid": "input-artist" }}
         />
         <TextField
           label="Album"
@@ -95,6 +97,7 @@ const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
           error={!!errors.album}
           helperText={errors.album?.message}
           fullWidth
+          inputProps={{ "data-testid": "input-album" }}
         />
         <TextField
           label="Cover Image URL"
@@ -106,6 +109,7 @@ const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
           error={!!errors.coverImage}
           helperText={errors.coverImage?.message}
           fullWidth
+          inputProps={{ "data-testid": "input-cover-image" }}
         />
 
         <Box>
@@ -188,7 +192,7 @@ const TrackForm = ({ initialValues = {}, onSave, onCancel }) => {
           <Button onClick={onCancel} color="secondary">
             Cancel
           </Button>
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" data-testid="submit-button">
             Save
           </Button>
         </Box>

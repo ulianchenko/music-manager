@@ -1,5 +1,9 @@
 import React from "react";
-import { Pagination as MuiPagination, Stack } from "@mui/material";
+import {
+  Pagination as MuiPagination,
+  Stack,
+  PaginationItem,
+} from "@mui/material";
 
 const Pagination = ({ page, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
@@ -11,6 +15,19 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
         page={page}
         onChange={(e, value) => onPageChange(value)}
         color="primary"
+        data-testid="pagination"
+        renderItem={(item) => (
+          <PaginationItem
+            {...item}
+            data-testid={
+              item.type === "next"
+                ? "pagination-next"
+                : item.type === "previous"
+                ? "pagination-prev"
+                : undefined
+            }
+          />
+        )}
       />
     </Stack>
   );
