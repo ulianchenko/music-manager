@@ -35,7 +35,7 @@ const TrackListItem = ({ track, onUpdate, onDelete }) => {
   };
 
   const handleSave = (updatedTrack) => {
-    onUpdate(updatedTrack);
+    onUpdate(id, updatedTrack);
     setIsModalOpen(false);
   };
 

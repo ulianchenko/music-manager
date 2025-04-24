@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  // baseURL: 'http://0.0.0.0:8000/api',
+  // baseURL: 'http://localhost:8000/api',
   baseURL: "https://music-manager-api-0eya.onrender.com/api",
 });
 
@@ -26,4 +26,16 @@ export const deleteTrack = async (id) => {
 export const updateTrack = async (id, updatedData) => {
   const response = await API.put(`/tracks/${id}`, updatedData);
   return response.data;
+};
+
+export const createTrack = async (newTrackData) => {
+  const response = await API.post("/tracks", newTrackData);
+  return response.data;
+};
+
+export const uploadTrackFile = async (trackId, formData) => {
+  const res = await API.post(`/tracks/${trackId}/upload`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
 };

@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Grid } from "@mui/material";
+import { Container, Typography, Grid, Button, Box } from "@mui/material";
 import { useTracks } from "../hooks/useTracks";
 import { useGenres } from "../hooks/useGenres";
 import Filters from "../components/Filters";
 import TrackListItem from "../components/TrackListItem";
 import Pagination from "../components/Pagination";
 import { debounce } from "lodash";
-import { deleteTrack } from "../api/tracks";
+import { deleteTrack, updateTrack } from "../api/tracks";
+import CreateTrackModal from "../modals/CreateTrackModal";
 
 const TrackListPage = () => {
   const [search, setSearch] = useState("");
@@ -17,6 +18,7 @@ const TrackListPage = () => {
   const [sort, setSort] = useState("title");
   const [order, setOrder] = useState("asc");
   const [tracks, setTracks] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data: genres, isLoading: isGenresLoading } = useGenres();
   const { data: trackData, isLoading: isTracksLoading } = useTracks({
@@ -47,10 +49,16 @@ const TrackListPage = () => {
     };
   }, []);
 
-  const handleUpdate = (updatedTrack) => {
-    setTracks((prev) =>
-      prev.map((track) => (track.id === updatedTrack.id ? updatedTrack : track))
-    );
+  const handleUpdate = async (id, updatedTrackData) => {
+    try {
+      const updatedTrack = await updateTrack(id, updatedTrackData);
+      setTracks((prev) =>
+        prev.map((track) => (track.id === updatedTrack.id ? updatedTrack : track))
+      );
+    } catch (error) {
+      console.error("Error updating track:", error);
+      alert("Failed to update track. Please try again.");
+    }
   };
 
   const handleDelete = async (id) => {
@@ -63,13 +71,25 @@ const TrackListPage = () => {
     }
   };
 
+  const handleCreate = (newTrack) => {
+    setTracks((prev) => [newTrack, ...prev]);
+  };
+
   if (isTracksLoading || isGenresLoading) return <div>Loading...</div>;
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        All Tracks
-      </Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography variant="h2">Music tracks</Typography>
+        <Button variant="contained" onClick={() => setIsCreateModalOpen(true)}>
+          Create Track
+        </Button>
+      </Box>
 
       <Filters
         searchValue={search}
@@ -114,6 +134,12 @@ const TrackListPage = () => {
         page={trackData?.meta.page}
         totalPages={trackData?.meta.totalPages}
         onPageChange={setPage}
+      />
+
+      <CreateTrackModal
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreate={handleCreate}
       />
     </Container>
   );
